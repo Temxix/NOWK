@@ -1,5 +1,6 @@
   package com.example.nowk;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -31,7 +32,11 @@ public class MainActivity extends AppCompatActivity {
         if(editName.getText().toString().isEmpty() || editKey.getText().toString().isEmpty()) return;
         String name = editName.getText().toString();
         String key = editKey.getText().toString();
-//        setContentView(R.layout.activity_chat);
+        Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+        intent.putExtra("name", name);
+        intent.putExtra("key", key);
+        startActivity(intent);
+        finish();
     }
     public void register(View view) {
 //        setContentView(R.layout.activity_register);
