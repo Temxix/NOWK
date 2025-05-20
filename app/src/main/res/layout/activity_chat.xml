@@ -23,6 +23,7 @@
         android:id="@+id/editText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:autofillHints=""
         android:hint="@string/enter_message"
         android:imeOptions="actionSend"
         android:inputType="text"

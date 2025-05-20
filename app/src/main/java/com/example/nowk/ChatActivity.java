@@ -15,6 +15,8 @@ public class ChatActivity extends AppCompatActivity {
     ListView listView;
     EditText editText;
 
+    String key;
+    String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,17 +28,18 @@ public class ChatActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        listView = findViewById(R.id.recyclerView);
-        editText = findViewById(R.id.editText);
-
         Intent intent = getIntent();
         String name = intent.getStringExtra("name");
         String key = intent.getStringExtra("key");
+        name = intent.getStringExtra("name");
+        key = intent.getStringExtra("key");
     }
-
     public void sendMessage(View view) {
-        if(editText.getText().toString().isEmpty()) return;
+        EditText editText = findViewById(R.id.editText);
         String message = editText.getText().toString();
+        if (message.isEmpty()) return;
 
+
+        editText.setText("");
     }
 }
