@@ -1,12 +1,12 @@
 package com.example.nowk;
 
-import com.example.nowk.adapter.MessageAdapter;
+import com.example.nowk.adapter.MessageReceivedAdapter;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.EditText;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,7 +15,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import android.widget.ArrayAdapter;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -23,21 +23,24 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import java.util.List;
 import java.util.ArrayList;
-import com.example.nowk.adapter.MessageAdapter;
-import com.example.nowk.Message;
-
 
 
 public class ChatActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     EditText editText;
-    List<Message> messageList = new ArrayList<>();
+    List<MessageReceived> messageReceivedList = new ArrayList<>();
     String key;
     String name;
-    MessageAdapter adapter;
-
-// В onCreate
-
+    MessageReceivedAdapter adapter;
+    private final Handler handler = new Handler();
+    private final int REFRESH_INTERVAL_MS = 1000; // 1 секунда
+    private final Runnable refreshMessagesRunnable = new Runnable() {
+        @Override
+        public void run() {
+            loadMessages(); // твой метод получения сообщений
+            handler.postDelayed(this, REFRESH_INTERVAL_MS);
+        }
+    };
 
 
     @Override
@@ -59,12 +62,13 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         editText = findViewById(R.id.editText);
         // Настройка адаптера
-        messageList = new ArrayList<>();
-        adapter = new MessageAdapter(this, messageList);
+        messageReceivedList = new ArrayList<>();
+        adapter = new MessageReceivedAdapter(this, messageReceivedList);
         recyclerView.setAdapter(adapter);
 
         // Загрузка сообщений с сервера
         loadMessages();
+        handler.post(refreshMessagesRunnable);
 
     }
     private void loadMessages() {
@@ -75,17 +79,16 @@ public class ChatActivity extends AppCompatActivity {
 
         ApiService apiService = retrofit.create(ApiService.class);
 
-        apiService.getMessages().enqueue(new Callback<List<Message>>() {
+        apiService.getMessages(name).enqueue(new Callback<List<MessageReceived>>() {
             @Override
-            public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
+            public void onResponse(Call<List<MessageReceived>> call, Response<List<MessageReceived>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Log.d("ChatActivity", "Messages received: " + response.body().size());
-                    for (Message msg : response.body()) {
+                    for (MessageReceived msg : response.body()) {
                         Log.d("ChatActivity", "Message content: " + msg.getContent());
                     }
-
-                    messageList.clear();
-                    messageList.addAll(response.body());
+                    messageReceivedList.clear();
+                    messageReceivedList.addAll(response.body());
                     adapter.notifyDataSetChanged();
                 } else {
                     Log.d("ChatActivity", "Response unsuccessful or empty body");
@@ -93,7 +96,7 @@ public class ChatActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<Message>> call, Throwable t) {
+            public void onFailure(Call<List<MessageReceived>> call, Throwable t) {
                 Log.e("ChatActivity", "Failed to load messages", t);
             }
         });
@@ -101,10 +104,33 @@ public class ChatActivity extends AppCompatActivity {
 
     public void sendMessage(View view) {
         EditText editText = findViewById(R.id.editText);
-        String message = editText.getText().toString();
-        if (message.isEmpty()) return;
+        String content = editText.getText().toString().trim();
+        if (content.isEmpty()) return;
 
+        String sender = name;
+        String recipient = name; //ИЗМЕНИТЬ!!!!
+
+        com.example.nowk.MessageRequest request = new com.example.nowk.MessageRequest(sender, recipient, content);
+
+        RetrofitClient.getApiService().postMessage(request).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Log.d("ChatActivity", "Message sent");
+                } else {
+                    Log.e("ChatActivity", "Failed: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("ChatActivity", "Error", t);
+            }
+        });
 
         editText.setText("");
     }
+
+
+
 }
