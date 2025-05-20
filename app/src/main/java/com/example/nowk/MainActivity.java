@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     public void login(View view) {
         EditText editName = findViewById(R.id.usernameEditText);
         EditText editKey = findViewById(R.id.privateKeyEditText);
-        if(editName.getText().toString().isEmpty() || editKey.getText().toString().isEmpty()) return;
+//        if(editName.getText().toString().isEmpty() || editKey.getText().toString().isEmpty()) return;
         String name = editName.getText().toString();
         String key = editKey.getText().toString();
         Intent intent = new Intent(MainActivity.this, ChatActivity.class);
