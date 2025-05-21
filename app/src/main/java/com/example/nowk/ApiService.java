@@ -19,4 +19,7 @@ public interface ApiService {
     Call<List<MessageReceived>> getMessages(
             @Query("recipient") String recipient
     );
+
+    @POST("api/users/register")
+    Call<Void> registerUser(@Body RegisterRequest request);
 }

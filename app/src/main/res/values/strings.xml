@@ -4,7 +4,7 @@
     <string name="sign_in">Войдите в аккаунт:</string>
     <string name="private_key">Закрытый ключ</string>
     <string name="send">Войти</string>
-    <string name="sign_up">Нет аккаунта?</string>
+    <string name="sign_up">Зарегестрироваться</string>
     <string name="send_message">Отправить сообщение</string>
     <string name="enter_message">Введите сообщение</string>
 </resources>

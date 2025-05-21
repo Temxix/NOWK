@@ -38,7 +38,9 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
-//    public void register(View view) {
-//        setContentView(R.layout.activity_register);
-//    }
+    public void register(View view) {
+        Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+        startActivity(intent);
+        finish();
+    }
 }

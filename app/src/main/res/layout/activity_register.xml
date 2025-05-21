@@ -2,7 +2,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="24dp"
@@ -13,7 +12,7 @@
         android:id="@+id/textView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/sign_in"
+        android:text="@string/sign_up"
         android:textSize="18sp"
         android:textAlignment="center"
         app:layout_constraintTop_toTopOf="parent"
@@ -31,46 +30,66 @@
         android:layout_marginBottom="24dp"
         android:hint="@string/username"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@id/privateKeyEditText"
+        app:layout_constraintBottom_toTopOf="@id/privateKeyContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textView" />
 
-    <!-- Поле ввода закрытого ключа -->
-    <EditText
-        android:id="@+id/privateKeyEditText"
-        android:layout_width="337dp"
-        android:layout_height="44dp"
-        android:layout_marginBottom="24dp"
-        android:hint="@string/private_key"
-        android:inputType="textPassword"
+    <!-- Контейнер с ключом и кнопкой копирования -->
+    <LinearLayout
+        android:id="@+id/privateKeyContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/usernameEditText"
         app:layout_constraintBottom_toTopOf="@id/submitButton"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/usernameEditText" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="24dp">
 
-    <!-- Кнопка -->
+        <TextView
+            android:id="@+id/privateKeyTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Private key will appear here"
+            android:padding="8dp"
+            android:background="#EEEEEE"
+            android:textIsSelectable="true"
+            android:textSize="14sp"
+            android:scrollHorizontally="true"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <Button
+            android:id="@+id/copyButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Copy" />
+    </LinearLayout>
+
+    <!-- Кнопка отправки -->
     <Button
         android:id="@+id/submitButton"
         android:layout_width="190dp"
         android:layout_height="45dp"
-        android:text="@string/send"
-        android:onClick="login"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/privateKeyEditText" />
-
-    <Button
-        android:id="@+id/openSecondActivityButton"
-        android:layout_width="155dp"
-        android:layout_height="39dp"
-        android:layout_marginTop="24dp"
         android:text="@string/sign_up"
         android:onClick="register"
+        app:layout_constraintTop_toBottomOf="@id/privateKeyContainer"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/submitButton" />
+        app:layout_constraintStart_toStartOf="parent" />
 
+    <Button
+        android:id="@+id/submitingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="@string/send"
+        android:onClick="login"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/submitButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
