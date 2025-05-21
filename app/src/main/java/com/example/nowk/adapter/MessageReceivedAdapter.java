@@ -18,8 +18,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class MessageReceivedAdapter extends RecyclerView.Adapter<MessageReceivedAdapter.ViewHolder> {
 
-    private List<MessageReceived> messages;
-    private Context context;
+    private final List<MessageReceived> messages;
+    private final Context context;
+
+    private static final int VIEW_TYPE_MINE = 1;
+    private static final int VIEW_TYPE_THEIR = 2;
 
     public MessageReceivedAdapter(Context context, List<MessageReceived> messages) {
         this.context = context;
@@ -34,7 +37,7 @@ public class MessageReceivedAdapter extends RecyclerView.Adapter<MessageReceived
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             senderText = itemView.findViewById(R.id.senderText);
-            timestampText = itemView.findViewById(R.id.timestampText);
+            timestampText = itemView.findViewById(R.id.timeText);
             messageText = itemView.findViewById(R.id.messageText);
         }
     }
@@ -42,7 +45,12 @@ public class MessageReceivedAdapter extends RecyclerView.Adapter<MessageReceived
     @NonNull
     @Override
     public MessageReceivedAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_message, parent, false);
+        View view;
+        if (viewType == VIEW_TYPE_MINE) {
+            view = LayoutInflater.from(context).inflate(R.layout.item_message_right, parent, false);
+        } else {
+            view = LayoutInflater.from(context).inflate(R.layout.item_message_left, parent, false);
+        }
         return new ViewHolder(view);
     }
 
@@ -57,6 +65,11 @@ public class MessageReceivedAdapter extends RecyclerView.Adapter<MessageReceived
     @Override
     public int getItemCount() {
         return messages.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return messages.get(position).isMine() ? VIEW_TYPE_MINE : VIEW_TYPE_THEIR;
     }
 
     private String formatTimestamp(String isoString) {

@@ -3,6 +3,8 @@ package com.example.nowk;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
@@ -14,6 +16,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.FileOutputStream;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -24,6 +28,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText usernameEditText;
     private Button copyButton;
     private String publicKey;
+    String privateKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,21 +37,19 @@ public class RegisterActivity extends AppCompatActivity {
 
         privateKeyTextView = findViewById(R.id.privateKeyTextView);
         usernameEditText = findViewById(R.id.usernameEditText);
-        copyButton = findViewById(R.id.copyButton);
     }
 
     public void register(View view) {
-        privateKey();
-    }
-    public void login(View view) {
-        privateKey();
+        privateKey();         // генерируем ключи и сохраняем
+        registerUser();       // отправляем имя + pubkey на сервер
     }
 
-    private void copyToClipboard(String text) {
-        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("Private Key", text);
-        clipboard.setPrimaryClip(clip);
+    public void login(View view) {
+        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
+
 
     private void registerUser() {
         String username = usernameEditText.getText().toString();
@@ -68,20 +71,43 @@ public class RegisterActivity extends AppCompatActivity {
                 Toast.makeText(RegisterActivity.this, "Ошибка: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+
+        Intent intent = new Intent(RegisterActivity.this, UserListActivity.class);
+        intent.putExtra("name", username);
+        intent.putExtra("key", privateKey);
+        startActivity(intent);
+        finish();
     }
 
     public void privateKey() {
         com.example.nowk.KeyGeneratorUtil keyUtil = new com.example.nowk.KeyGeneratorUtil();
 
         publicKey = keyUtil.getPublicKeyBase64();
-        String privateKey = keyUtil.getPrivateKeyBase64();
+        privateKey = keyUtil.getPrivateKeyBase64();
 
         privateKeyTextView.setText(privateKey);
+        savePrivateKeyToFile(privateKey); // <-- сохраняем в файл
+        saveKeyToPreferences();           // <-- сохраняем в SharedPreferences
+    }
 
-        copyButton.setOnClickListener(v -> {
-            copyToClipboard(privateKey);
-            Toast.makeText(this, "Скопируйте ключ", Toast.LENGTH_SHORT).show();
-            registerUser();
-        });
+    private void savePrivateKeyToFile(String privateKey) {
+        try {
+            FileOutputStream fos = openFileOutput("private_key.txt", MODE_PRIVATE);
+            fos.write(privateKey.getBytes());
+            fos.close();
+            Toast.makeText(this, "Ключ сохранён", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "Ошибка сохранения ключа", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }
+
+    // ⬇⬇⬇ добавлено: сохраняем username → privateKey в SharedPreferences
+    private void saveKeyToPreferences() {
+        String username = usernameEditText.getText().toString().trim();
+        if (!username.isEmpty() && privateKey != null && !privateKey.isEmpty()) {
+            SharedPreferences prefs = getSharedPreferences("keys", MODE_PRIVATE);
+            prefs.edit().putString(username, privateKey).apply();
+        }
     }
 }

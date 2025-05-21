@@ -8,6 +8,8 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -31,16 +33,8 @@ public class ChatActivity extends AppCompatActivity {
     List<MessageReceived> messageReceivedList = new ArrayList<>();
     String key;
     String name;
+    String recipient;
     MessageReceivedAdapter adapter;
-    private final Handler handler = new Handler();
-    private final int REFRESH_INTERVAL_MS = 1000; // 1 секунда
-    private final Runnable refreshMessagesRunnable = new Runnable() {
-        @Override
-        public void run() {
-            loadMessages(); // твой метод получения сообщений
-            handler.postDelayed(this, REFRESH_INTERVAL_MS);
-        }
-    };
 
 
     @Override
@@ -48,9 +42,6 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_chat);
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -59,47 +50,67 @@ public class ChatActivity extends AppCompatActivity {
         Intent intent = getIntent();
         name = intent.getStringExtra("name");
         key = intent.getStringExtra("key");
+        recipient = intent.getStringExtra("recipient");
         recyclerView = findViewById(R.id.recyclerView);
         editText = findViewById(R.id.editText);
         // Настройка адаптера
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         messageReceivedList = new ArrayList<>();
         adapter = new MessageReceivedAdapter(this, messageReceivedList);
         recyclerView.setAdapter(adapter);
 
         // Загрузка сообщений с сервера
         loadMessages();
-        handler.post(refreshMessagesRunnable);
+        TextView myTextView = findViewById(R.id.recView);
+        myTextView.setText(recipient);
 
     }
+    public void refreshMessages(View view) {
+        loadMessages();
+    }
+
     private void loadMessages() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        // Временно захардкоженные сообщения между tmx и alice
+//        messageReceivedList.clear();
+//
+//        messageReceivedList.add(new MessageReceived("tmx", "Привет, Alice!", "2025-05-21T15:00:00", true));
+//        messageReceivedList.add(new MessageReceived("alice", "Привет, Tmx. Как дела?", "2025-05-21T15:01:30", false));
+//        messageReceivedList.add(new MessageReceived("tmx", "Живу. Разбираю баги. А ты?", "2025-05-21T15:02:10", true));
+//        messageReceivedList.add(new MessageReceived("alice", "Пишу стихи и жду, когда ты ответишь.", "2025-05-21T15:03:00", false));
+//
+//        adapter.notifyDataSetChanged();
 
-        ApiService apiService = retrofit.create(ApiService.class);
 
-        apiService.getMessages(name).enqueue(new Callback<List<MessageReceived>>() {
-            @Override
-            public void onResponse(Call<List<MessageReceived>> call, Response<List<MessageReceived>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    Log.d("ChatActivity", "Messages received: " + response.body().size());
-                    for (MessageReceived msg : response.body()) {
-                        Log.d("ChatActivity", "Message content: " + msg.getContent());
-                    }
-                    messageReceivedList.clear();
-                    messageReceivedList.addAll(response.body());
-                    adapter.notifyDataSetChanged();
-                } else {
-                    Log.d("ChatActivity", "Response unsuccessful or empty body");
+    // Старый код с запросом
+    ApiService apiService = RetrofitClient.getApiService();
+
+
+    apiService.getMessages(name, recipient).enqueue(new Callback<List<MessageWrapper>>() {
+        @Override
+        public void onResponse(Call<List<MessageWrapper>> call, Response<List<MessageWrapper>> response) {
+            Log.d("ChatActivity", "Response code: " + response.code());
+            Log.d("ChatActivity", "Response body: " + response.body());
+            if (response.isSuccessful() && response.body() != null) {
+                List<MessageWrapper> wrappers = response.body();
+                messageReceivedList.clear();
+                for (MessageWrapper wrapper : wrappers) {
+                    MessageReceived msg = wrapper.getMessage();
+                    msg.setMine(wrapper.isMine()); // ← добавляем флаг
+                    messageReceivedList.add(msg);
                 }
+                adapter.notifyDataSetChanged();
+            } else {
+                Log.d("ChatActivity", "Response unsuccessful or empty body");
             }
+        }
 
-            @Override
-            public void onFailure(Call<List<MessageReceived>> call, Throwable t) {
-                Log.e("ChatActivity", "Failed to load messages", t);
-            }
-        });
+        @Override
+        public void onFailure(Call<List<MessageWrapper>> call, Throwable t) {
+            Log.e("ChatActivity", "Failed to load messages", t);
+        }
+    });
+
     }
 
     public void sendMessage(View view) {
@@ -108,7 +119,6 @@ public class ChatActivity extends AppCompatActivity {
         if (content.isEmpty()) return;
 
         String sender = name;
-        String recipient = name; //ИЗМЕНИТЬ!!!!
 
         com.example.nowk.MessageRequest request = new com.example.nowk.MessageRequest(sender, recipient, content);
 

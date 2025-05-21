@@ -16,6 +16,12 @@
         android:theme="@style/Theme.NOWK"
         tools:targetApi="31">
         <activity
+            android:name=".DebugActivity"
+            android:exported="false" />
+        <activity
+            android:name=".UserListActivity"
+            android:exported="false" />
+        <activity
             android:name=".RegisterActivity"
             android:exported="false" />
         <activity
