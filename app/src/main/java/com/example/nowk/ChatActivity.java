@@ -2,15 +2,16 @@ package com.example.nowk;
 
 import com.example.nowk.adapter.MessageReceivedAdapter;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -21,10 +22,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class ChatActivity extends AppCompatActivity {
@@ -86,17 +86,21 @@ public class ChatActivity extends AppCompatActivity {
     ApiService apiService = RetrofitClient.getApiService();
 
 
-    apiService.getMessages(name, recipient).enqueue(new Callback<List<MessageWrapper>>() {
+    apiService.getMessages(name, recipient).enqueue(new Callback<>() {
+        @SuppressLint("NotifyDataSetChanged")
         @Override
-        public void onResponse(Call<List<MessageWrapper>> call, Response<List<MessageWrapper>> response) {
+        public void onResponse(@NonNull Call<List<MessageWrapper>> call, @NonNull Response<List<MessageWrapper>> response) {
             Log.d("ChatActivity", "Response code: " + response.code());
             Log.d("ChatActivity", "Response body: " + response.body());
             if (response.isSuccessful() && response.body() != null) {
                 List<MessageWrapper> wrappers = response.body();
                 messageReceivedList.clear();
                 for (MessageWrapper wrapper : wrappers) {
+                    if (Objects.equals(name, recipient) && !wrapper.isMine()) {
+                        continue;
+                    }
                     MessageReceived msg = wrapper.getMessage();
-                    msg.setMine(wrapper.isMine()); // ← добавляем флаг
+                    msg.setMine(wrapper.isMine());
                     messageReceivedList.add(msg);
                 }
                 adapter.notifyDataSetChanged();
@@ -106,7 +110,7 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onFailure(Call<List<MessageWrapper>> call, Throwable t) {
+        public void onFailure(@NonNull Call<List<MessageWrapper>> call, @NonNull Throwable t) {
             Log.e("ChatActivity", "Failed to load messages", t);
         }
     });
@@ -122,23 +126,23 @@ public class ChatActivity extends AppCompatActivity {
 
         com.example.nowk.MessageRequest request = new com.example.nowk.MessageRequest(sender, recipient, content);
 
-        RetrofitClient.getApiService().postMessage(request).enqueue(new Callback<Void>() {
+        RetrofitClient.getApiService().postMessage(request).enqueue(new Callback<>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                 if (response.isSuccessful()) {
                     Log.d("ChatActivity", "Message sent");
+                    loadMessages();
+                    editText.setText("");
                 } else {
                     Log.e("ChatActivity", "Failed: " + response.code());
                 }
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                 Log.e("ChatActivity", "Error", t);
             }
         });
-
-        editText.setText("");
     }
 
 
