@@ -21,12 +21,12 @@
         app:layout_constraintVertical_chainStyle="packed"
         android:layout_marginBottom="24dp" />
 
-    <!-- Поле ввода имени -->
     <EditText
         android:id="@+id/usernameEditText"
         android:layout_width="262dp"
         android:layout_height="45dp"
         android:layout_marginBottom="24dp"
+        android:autofillHints=""
         android:hint="@string/username"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toTopOf="@id/privateKeyContainer"
@@ -51,7 +51,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Private key will appear here"
+            android:hint="@string/private_key_will_appear_here"
             android:padding="8dp"
             android:background="#EEEEEE"
             android:textIsSelectable="true"

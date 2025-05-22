@@ -7,4 +7,7 @@
     <string name="sign_up">Зарегестрироваться</string>
     <string name="send_message">Отправить сообщение</string>
     <string name="enter_message">Введите сообщение</string>
+    <string name="refresh">Refresh</string>
+    <string name="textview">TextView</string>
+    <string name="private_key_will_appear_here">Private key will appear here</string>
 </resources>
