@@ -1,10 +1,9 @@
-// com.example.nowk.model.MessageRequest.java
 package com.example.nowk;
 
 public class MessageRequest {
-    private String sender;
-    private String recipient;
-    private String content;
+    private final String sender;
+    private final String recipient;
+    private final String content;
 
     public MessageRequest(String sender, String recipient, String content) {
         this.sender = sender;

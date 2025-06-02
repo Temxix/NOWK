@@ -1,9 +1,9 @@
 package com.example.nowk;
 
 public class MessageReceived {
-    private String sender;
-    private String timestamp;
-    private String content;
+    private final String sender;
+    private final String timestamp;
+    private final String content;
     private boolean isMine;
 
     public MessageReceived(String sender, String content, String timestamp, boolean isMine) {

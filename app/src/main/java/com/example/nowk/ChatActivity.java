@@ -2,8 +2,6 @@ package com.example.nowk;
 
 import com.example.nowk.adapter.MessageReceivedAdapter;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,7 +22,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Objects;
 
 
 public class ChatActivity extends AppCompatActivity {
@@ -47,14 +44,18 @@ public class ChatActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        Intent intent = getIntent();
-        name = intent.getStringExtra("name");
-        key = intent.getStringExtra("key");
-        recipient = intent.getStringExtra("recipient");
+//        Intent intent = getIntent();
+
+        name = "temxix";
+        key = "123";
+        recipient = "serge";
+//        name = intent.getStringExtra("name");
+//        key = intent.getStringExtra("key");
+//        recipient = intent.getStringExtra("recipient");
         recyclerView = findViewById(R.id.recyclerView);
         editText = findViewById(R.id.editText);
-        // Настройка адаптера
 
+        // Настройка адаптера
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         messageReceivedList = new ArrayList<>();
         adapter = new MessageReceivedAdapter(this, messageReceivedList);
@@ -71,49 +72,42 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void loadMessages() {
-        // Временно захардкоженные сообщения между tmx и alice
-//        messageReceivedList.clear();
-//
-//        messageReceivedList.add(new MessageReceived("tmx", "Привет, Alice!", "2025-05-21T15:00:00", true));
-//        messageReceivedList.add(new MessageReceived("alice", "Привет, Tmx. Как дела?", "2025-05-21T15:01:30", false));
-//        messageReceivedList.add(new MessageReceived("tmx", "Живу. Разбираю баги. А ты?", "2025-05-21T15:02:10", true));
-//        messageReceivedList.add(new MessageReceived("alice", "Пишу стихи и жду, когда ты ответишь.", "2025-05-21T15:03:00", false));
-//
+
 //        adapter.notifyDataSetChanged();
 
 
     // Старый код с запросом
-    ApiService apiService = RetrofitClient.getApiService();
-
-
-    apiService.getMessages(name, recipient).enqueue(new Callback<>() {
-        @SuppressLint("NotifyDataSetChanged")
-        @Override
-        public void onResponse(@NonNull Call<List<MessageWrapper>> call, @NonNull Response<List<MessageWrapper>> response) {
-            Log.d("ChatActivity", "Response code: " + response.code());
-            Log.d("ChatActivity", "Response body: " + response.body());
-            if (response.isSuccessful() && response.body() != null) {
-                List<MessageWrapper> wrappers = response.body();
-                messageReceivedList.clear();
-                for (MessageWrapper wrapper : wrappers) {
-                    if (Objects.equals(name, recipient) && !wrapper.isMine()) {
-                        continue;
-                    }
-                    MessageReceived msg = wrapper.getMessage();
-                    msg.setMine(wrapper.isMine());
-                    messageReceivedList.add(msg);
-                }
-                adapter.notifyDataSetChanged();
-            } else {
-                Log.d("ChatActivity", "Response unsuccessful or empty body");
-            }
-        }
-
-        @Override
-        public void onFailure(@NonNull Call<List<MessageWrapper>> call, @NonNull Throwable t) {
-            Log.e("ChatActivity", "Failed to load messages", t);
-        }
-    });
+//    ApiService apiService = RetrofitClient.getApiService();
+//
+//
+//    apiService.getMessages(name, recipient).enqueue(new Callback<>() {
+//        @SuppressLint("NotifyDataSetChanged")
+//        @Override
+//        public void onResponse(@NonNull Call<List<MessageWrapper>> call, @NonNull Response<List<MessageWrapper>> response) {
+//            Log.d("ChatActivity", "Response code: " + response.code());
+//            Log.d("ChatActivity", "Response body: " + response.body());
+//            if (response.isSuccessful() && response.body() != null) {
+//                List<MessageWrapper> wrappers = response.body();
+//                messageReceivedList.clear();
+//                for (MessageWrapper wrapper : wrappers) {
+//                    if (Objects.equals(name, recipient) && !wrapper.isMine()) {
+//                        continue;
+//                    }
+//                    MessageReceived msg = wrapper.getMessage();
+//                    msg.setMine(wrapper.isMine());
+//                    messageReceivedList.add(msg);
+//                }
+//                adapter.notifyDataSetChanged();
+//            } else {
+//                Log.d("ChatActivity", "Response unsuccessful or empty body");
+//            }
+//        }
+//
+//        @Override
+//        public void onFailure(@NonNull Call<List<MessageWrapper>> call, @NonNull Throwable t) {
+//            Log.e("ChatActivity", "Failed to load messages", t);
+//        }
+//    });
 
     }
 
@@ -131,8 +125,6 @@ public class ChatActivity extends AppCompatActivity {
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                 if (response.isSuccessful()) {
                     Log.d("ChatActivity", "Message sent");
-                    loadMessages();
-                    editText.setText("");
                 } else {
                     Log.e("ChatActivity", "Failed: " + response.code());
                 }
@@ -143,6 +135,12 @@ public class ChatActivity extends AppCompatActivity {
                 Log.e("ChatActivity", "Error", t);
             }
         });
+
+        editText.setText("");
+        TimeHolder timeHolder = new TimeHolder();
+        String now = timeHolder.getCurrentTime();
+        messageReceivedList.add(new MessageReceived(sender, content, now, true));
+        loadMessages();
     }
 
 
