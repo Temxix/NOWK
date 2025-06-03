@@ -22,7 +22,7 @@ public class MessageReceivedAdapter extends RecyclerView.Adapter<MessageReceived
     private final Context context;
 
     private static final int VIEW_TYPE_MINE = 1;
-    private static final int VIEW_TYPE_THEIR = 2;
+    private static final int VIEW_TYPE_OTHER = 2;
 
     public MessageReceivedAdapter(Context context, List<MessageReceived> messages) {
         this.context = context;
@@ -69,7 +69,7 @@ public class MessageReceivedAdapter extends RecyclerView.Adapter<MessageReceived
 
     @Override
     public int getItemViewType(int position) {
-        return messages.get(position).isSentByMe() ? VIEW_TYPE_MINE : VIEW_TYPE_THEIR;
+        return messages.get(position).isSentByMe() ? VIEW_TYPE_MINE : VIEW_TYPE_OTHER;
     }
 
     private String formatTimestamp(String isoString) {

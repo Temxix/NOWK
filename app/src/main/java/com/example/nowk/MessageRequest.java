@@ -1,18 +1,18 @@
 package com.example.nowk;
 
 public class MessageRequest {
-    private final String sender;
+    private final String username;
     private final String recipient;
     private final String content;
 
-    public MessageRequest(String sender, String recipient, String content) {
-        this.sender = sender;
+    public MessageRequest(String username, String recipient, String content) {
+        this.username = username;
         this.recipient = recipient;
         this.content = content;
     }
 
     public String getSender() {
-        return sender;
+        return username;
     }
 
     public String getRecipient() {
