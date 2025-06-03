@@ -1,36 +1,38 @@
 package com.example.nowk;
 
 public class MessageReceived {
-    private final String sender;
-    private final String timestamp;
-    private final String content;
-    private boolean isMine;
+    private String username;    // вместо sender
+    private String recipient;   // есть в ответе, у тебя нет в модели
+    private String timestamp;
+    private String content;
+    private boolean sentByMe;  // вместо isMine
 
-    public MessageReceived(String sender, String content, String timestamp, boolean isMine) {
-        this.sender = sender;
-        this.content = content;
-        this.timestamp = timestamp;
-        this.isMine = isMine;
-    }
+    public MessageReceived() {}
 
-    public boolean isMine() {
-        return isMine;
-    }
+    // геттеры и сеттеры
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
-    public void setMine(boolean mine) {
-        isMine = mine;
-    }
+    public String getRecipient() { return recipient; }
+    public void setRecipient(String recipient) { this.recipient = recipient; }
 
+    public String getTimestamp() { return timestamp; }
+    public void setTimestamp(String timestamp) { this.timestamp = timestamp; }
 
-    public String getTimestamp() {
-        return timestamp;
-    }
+    public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
 
-    public String getSender() {
-        return sender;
-    }
+    public boolean isSentByMe() { return sentByMe; }
+    public void setSentByMe(boolean sentByMe) { this.sentByMe = sentByMe; }
 
-    public String getContent() {
-        return content;
+    @Override
+    public String toString() {
+        return "MessageReceived{" +
+                "username='" + username + '\'' +
+                ", recipient='" + recipient + '\'' +
+                ", timestamp='" + timestamp + '\'' +
+                ", content='" + content + '\'' +
+                ", sentByMe=" + sentByMe +
+                '}';
     }
 }

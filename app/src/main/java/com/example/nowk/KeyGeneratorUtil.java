@@ -9,22 +9,22 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 
 public class KeyGeneratorUtil {
-    private PublicKey publicKey;
-    private PrivateKey privateKey;
+    private final PublicKey publicKey;
+    private final PrivateKey privateKey;
 
-    public KeyGeneratorUtil() {
-        generateKeys();
+    private KeyGeneratorUtil(KeyPair keyPair) {
+        this.privateKey = keyPair.getPrivate();
+        this.publicKey = keyPair.getPublic();
     }
 
-    private void generateKeys() {
+    public static KeyGeneratorUtil generate() {
         try {
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
             keyGen.initialize(2048);
             KeyPair keyPair = keyGen.generateKeyPair();
-            this.privateKey = keyPair.getPrivate();
-            this.publicKey = keyPair.getPublic();
+            return new KeyGeneratorUtil(keyPair);
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Error generating RSA keys", e);
+            throw new RuntimeException("RSA not supported on this device", e);
         }
     }
 
@@ -44,3 +44,4 @@ public class KeyGeneratorUtil {
         return privateKey;
     }
 }
+

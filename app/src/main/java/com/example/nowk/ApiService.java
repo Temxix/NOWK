@@ -17,10 +17,11 @@ public interface ApiService {
     Call<List<String>> getUserNames();
 
     @GET("/api/messages")
-    Call<List<MessageWrapper>> getMessages(
+    Call<List<MessageReceived>> getMessages(
             @Query("username") String name,
             @Query("recipient") String recipient
     );
+
 
     @POST("api/users/register")
     Call<Void> registerUser(@Body RegisterRequest request);

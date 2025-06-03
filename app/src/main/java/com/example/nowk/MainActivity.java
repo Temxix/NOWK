@@ -10,8 +10,6 @@ import android.widget.EditText;
 import java.io.FileInputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Objects;
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -25,6 +23,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
+        Intent intent = new Intent(this, DebugActivity.class);
+        startActivity(intent);
+        finish();
+
 
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -78,7 +82,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void loadPrivateKey(View view) {
         String privateKey = loadPrivateKeyFromFile();
-        editKey.setText(Objects.requireNonNullElse(privateKey, "Нет ключа"));
+        if (privateKey != null) {
+            editKey.setText(privateKey);
+        } else {
+            editKey.setText("Нет ключа");
+        }
     }
 
     private String loadPrivateKeyFromFile() {
@@ -93,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
             reader.close();
             return stringBuilder.toString();
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }

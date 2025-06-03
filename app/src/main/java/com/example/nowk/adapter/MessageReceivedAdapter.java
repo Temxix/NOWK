@@ -57,7 +57,7 @@ public class MessageReceivedAdapter extends RecyclerView.Adapter<MessageReceived
     @Override
     public void onBindViewHolder(@NonNull MessageReceivedAdapter.ViewHolder holder, int position) {
         MessageReceived message = messages.get(position);
-        holder.senderText.setText(message.getSender());
+        holder.senderText.setText(message.getUsername());
         holder.timestampText.setText(formatTimestamp(message.getTimestamp()));
         holder.messageText.setText(message.getContent());
     }
@@ -69,7 +69,7 @@ public class MessageReceivedAdapter extends RecyclerView.Adapter<MessageReceived
 
     @Override
     public int getItemViewType(int position) {
-        return messages.get(position).isMine() ? VIEW_TYPE_MINE : VIEW_TYPE_THEIR;
+        return messages.get(position).isSentByMe() ? VIEW_TYPE_MINE : VIEW_TYPE_THEIR;
     }
 
     private String formatTimestamp(String isoString) {

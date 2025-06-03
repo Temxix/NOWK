@@ -40,9 +40,21 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void register(View view) {
-        privateKey();         // генерируем ключи и сохраняем
-        registerUser();       // отправляем имя + pubkey на сервер
+        new Thread(() -> {
+            KeyGeneratorUtil keyUtil = KeyGeneratorUtil.generate();
+            publicKey = keyUtil.getPublicKeyBase64();
+            privateKey = keyUtil.getPrivateKeyBase64();
+
+            savePrivateKeyToFile(privateKey);
+            saveKeyToPreferences();
+
+            runOnUiThread(() -> {
+                privateKeyTextView.setText(privateKey); // безопасно для UI
+                registerUser(); // ← всё готово, отправляем
+            });
+        }).start();
     }
+
 
     public void login(View view) {
         Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
@@ -80,7 +92,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void privateKey() {
-        com.example.nowk.KeyGeneratorUtil keyUtil = new com.example.nowk.KeyGeneratorUtil();
+        KeyGeneratorUtil keyUtil = KeyGeneratorUtil.generate();
 
         publicKey = keyUtil.getPublicKeyBase64();
         privateKey = keyUtil.getPrivateKeyBase64();
