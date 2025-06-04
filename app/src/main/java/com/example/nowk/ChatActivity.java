@@ -74,10 +74,10 @@ public class ChatActivity extends AppCompatActivity {
 
         // Пример "захардкоженных" сообщений
         MessageReceived msg1 = new MessageReceived();
-        msg1.setUsername("Alice");
-        msg1.setRecipient(username);
+        msg1.setUsername(username); // ты сам
+        msg1.setRecipient("Alice");
         msg1.setContent("Привет! Как дела?");
-        msg1.setSentByMe(username.equals("Alice"));
+        msg1.setSentByMe(false);
         msg1.setTimestamp("12:00");
 
         MessageReceived msg2 = new MessageReceived();
@@ -88,10 +88,10 @@ public class ChatActivity extends AppCompatActivity {
         msg2.setTimestamp("12:00");
 
         MessageReceived msg3 = new MessageReceived();
-        msg3.setUsername("Alice");
-        msg3.setRecipient(username);
+        msg3.setUsername(username); // ты сам
+        msg3.setRecipient("Alice");
         msg3.setContent("Тоже норм. Скучала.");
-        msg3.setSentByMe(username.equals("Alice"));
+        msg3.setSentByMe(false);
         msg3.setTimestamp("12:05");
 
         messages.add(msg1);

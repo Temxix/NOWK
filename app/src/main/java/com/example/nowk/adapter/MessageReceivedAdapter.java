@@ -57,7 +57,7 @@ public class MessageReceivedAdapter extends RecyclerView.Adapter<MessageReceived
     @Override
     public void onBindViewHolder(@NonNull MessageReceivedAdapter.ViewHolder holder, int position) {
         MessageReceived message = messages.get(position);
-        holder.senderText.setText(message.getUsername());
+        holder.senderText.setText(message.isSentByMe() ? "Я" : message.getRecipient());
         holder.timestampText.setText(formatTimestamp(message.getTimestamp()));
         holder.messageText.setText(message.getContent());
     }
