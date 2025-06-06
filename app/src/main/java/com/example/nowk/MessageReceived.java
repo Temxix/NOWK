@@ -7,10 +7,17 @@ public class MessageReceived {
     private String content;
     private boolean sentByMe;  // вместо isMine
 
-    public MessageReceived() {}
+    public void setAll(String username, String recipient, String timestamp, String content, boolean sentByMe) {
+        this.username = username;
+        this.recipient = recipient;
+        this.timestamp = timestamp;
+        this.content = content;
+        this.sentByMe = sentByMe;
+    }
 
     // геттеры и сеттеры
     public String getUsername() { return username; }
+
     public void setUsername(String username) { this.username = username; }
 
     public String getRecipient() { return recipient; }

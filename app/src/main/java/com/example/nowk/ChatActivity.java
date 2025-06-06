@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,6 +30,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private String username;    // Твой логин
     private String recipient; // Имя получателя
+    public TextView nameView;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -40,6 +42,8 @@ public class ChatActivity extends AppCompatActivity {
         username = intent.getStringExtra("name");
         recipient = intent.getStringExtra("recipient");
 
+        nameView = findViewById(R.id.nameView);
+        nameView.setText(recipient);
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new MessageReceivedAdapter(this, messages);
@@ -74,36 +78,135 @@ public class ChatActivity extends AppCompatActivity {
 //            }
 //        });
 
-
         messages.clear();
 
-        // Пример "захардкоженных" сообщений
-        MessageReceived msg1 = new MessageReceived();
-        msg1.setUsername(username); // ты сам
-        msg1.setRecipient(recipient);
-        msg1.setContent("Привет! Как дела?");
-        msg1.setSentByMe(false);
-        msg1.setTimestamp("12:00");
+        MessageReceived m;
 
-        MessageReceived msg2 = new MessageReceived();
-        msg2.setUsername(username); // ты сам
-        msg2.setRecipient(recipient);
-        msg2.setContent("Всё окей, а ты как?");
-        msg2.setSentByMe(true);
-        msg2.setTimestamp("12:00");
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:00:01", "Первое сообщение. Не жди лёгких ответов.", true);
+        messages.add(m);
 
-        MessageReceived msg3 = new MessageReceived();
-        msg3.setUsername(username); // ты сам
-        msg3.setRecipient(recipient);
-        msg3.setContent("Тоже норм.");
-        msg3.setSentByMe(false);
-        msg3.setTimestamp("12:05");
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:01:15", "Я готова слушать. Что у тебя на уме?", false);
+        messages.add(m);
 
-        messages.add(msg1);
-        messages.add(msg2);
-        messages.add(msg3);
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:02:30", "Сначала пойми: здесь нет случайностей.", true);
+        messages.add(m);
 
-        adapter.notifyDataSetChanged();
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:03:45", "Твоя тишина — уже сообщение.", false);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:04:50", "Не каждый выдержит правду, но её не спрятать.", true);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:05:10", "Что ты хочешь от меня?", false);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:06:25", "Собраться. Идти дальше. Без оправданий.", true);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:07:40", "Ты не из тех, кто легко сдаётся.", false);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:08:55", "Я не обещаю лёгких решений. Но — я даю выбор.", true);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:09:10", "Что будет дальше?", false);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:10:20", "Ты готова встретить правду лицом?", true);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:11:35", "Правда всегда тяжелее, чем кажется.", false);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:12:50", "Но без неё нельзя строить будущее.", true);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:13:05", "Расскажи, что ты видишь?", false);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:14:20", "Мир не изменится, если ждать перемен с дивана.", true);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:15:30", "Твои слова — вызов.", false);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:16:45", "Выбор всегда остаётся за тобой.", true);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:17:55", "Что ты предлагаешь?", false);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:18:10", "Начать с честности. И с действия.", true);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:19:25", "Хорошо. Я с тобой.", false);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:20:40", "Тогда не оглядывайся назад.", true);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:21:55", "Пусть будет так.", false);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:23:10", "Жди меня завтра в восемь.", true);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:24:25", "Я буду.", false);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:25:40", "Помни: тишина — это тоже ответ.", true);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:26:55", "Поняла.", false);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:28:10", "Не теряй себя.", true);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:29:25", "Я уже давно не та, кем была.", false);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:30:40", "Тогда значит идёшь в правильном направлении.", true);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:31:55", "Спасибо, TMX.", false);
+        messages.add(m);
+
+        m = new MessageReceived();
+        m.setAll("TMX", recipient, "2025-06-06T18:33:10", "Это ещё не конец.", true);
+        messages.add(m);
+
+
 
     }
     public void sendMessage(View view) {

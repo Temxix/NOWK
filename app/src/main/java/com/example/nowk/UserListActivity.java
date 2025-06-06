@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,6 +27,8 @@ public class UserListActivity extends AppCompatActivity {
     Handler handler = new Handler();
     List<String> users = new ArrayList<>();
 
+    TextView nameView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +37,8 @@ public class UserListActivity extends AppCompatActivity {
         currentUserName = intent.getStringExtra("name");
         key = intent.getStringExtra("key");
 
+        nameView = findViewById(R.id.nameView);
+        nameView.setText("       Hi, " + currentUserName + "!");
         recyclerView = findViewById(R.id.userRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         loadUserList();
@@ -45,13 +50,14 @@ public class UserListActivity extends AppCompatActivity {
 //            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
 //                if (response.isSuccessful() && response.body() != null) {
 //                    List<String> usersList = response.body();
-                    List<String> usersList = Arrays.asList("alice", "serge", "dima");
-                    Log.d("UserListActivity", "Пользователи загружены: " + usersList.toString());
-                    users.add(currentUserName); // чат с собой первым
+        List<String> usersList = Arrays.asList(
+                "alice", "serge", "dima", "olga", "max", "lena", "ivan", "kate", "john", "maria",
+                "peter", "nina", "alex", "irina", "viktor", "sofia", "oleg", "anna", "igor", "yulia",
+                "mike", "dasha", "andrew", "sveta", "roman", "liza", "sergey", "tanya", "vasya", "natasha"
+        );
+        Log.d("UserListActivity", "Пользователи загружены: " + usersList.toString());
                     for (String user : usersList) {
-                        if (!user.equals(currentUserName)) {
                             users.add(user); // потом остальные
-                        }
                     }
                     adapter = new UserListAdapter(users, username -> openChat(username));
                     recyclerView.setAdapter(adapter);
