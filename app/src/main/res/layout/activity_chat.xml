@@ -1,50 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp">
+    android:padding="16dp"
+    tools:context=".ChatActivity">
 
-    <!-- Список сообщений -->
+    <!-- Заголовок или имя чата -->
+    <ImageButton
+        android:id="@+id/imageButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_media_rew" />
 
     <TextView
         android:id="@+id/recView"
-        android:layout_width="198dp"
-        android:layout_height="45dp"
+        android:layout_width="189dp"
+        android:layout_height="49dp"
         android:text="@string/textview"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="372dp"
-        android:layout_height="497dp"
-        android:overScrollMode="always"
-        android:scrollbars="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/editText"
+        android:textSize="24sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Поле ввода сообщения -->
+    <!-- RecyclerView для сообщений -->
+
+    <!-- Кнопка обновления -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="378dp"
+        android:layout_height="596dp"
+        android:clipToPadding="false"
+        android:overScrollMode="always"
+        android:paddingBottom="8dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toTopOf="@id/editText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recView"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <!-- Поле ввода -->
+
+    <ImageButton
+        android:id="@+id/refreshButton"
+        android:layout_width="46dp"
+        android:layout_height="50dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/refresh"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_popup_sync" />
+
     <EditText
         android:id="@+id/editText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:autofillHints=""
         android:hint="@string/enter_message"
         android:imeOptions="actionSend"
         android:inputType="text"
         android:backgroundTint="@android:color/darker_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/sendButton"
-        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintEnd_toStartOf="@id/sendButton"
         android:layout_marginEnd="8dp" />
 
     <!-- Кнопка отправки -->
@@ -52,27 +77,11 @@
         android:id="@+id/sendButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/send_message"
         android:onClick="sendMessage"
         android:src="@android:drawable/ic_menu_send"
+        android:background="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
-    <ImageButton
-        android:id="@+id/refreshButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:contentDescription="@string/refresh"
-        android:onClick="refreshMessages"
-        app:layout_constraintBottom_toTopOf="@+id/editText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recyclerView"
-        app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@android:drawable/ic_popup_sync" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

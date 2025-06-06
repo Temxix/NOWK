@@ -40,11 +40,12 @@ public class UserListActivity extends AppCompatActivity {
     }
 
     private void loadUserList() {
-        RetrofitClient.getApiService().getUserNames().enqueue(new Callback<List<String>>() {
-            @Override
-            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<String> usersList = response.body();
+//        RetrofitClient.getApiService().getUserNames().enqueue(new Callback<List<String>>() {
+//            @Override
+//            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+//                if (response.isSuccessful() && response.body() != null) {
+//                    List<String> usersList = response.body();
+                    List<String> usersList = Arrays.asList("alice", "serge", "dima");
                     Log.d("UserListActivity", "Пользователи загружены: " + usersList.toString());
                     users.add(currentUserName); // чат с собой первым
                     for (String user : usersList) {
@@ -54,16 +55,16 @@ public class UserListActivity extends AppCompatActivity {
                     }
                     adapter = new UserListAdapter(users, username -> openChat(username));
                     recyclerView.setAdapter(adapter);
-                } else {
-                    Log.e("UserListActivity", "Ответ сервера не успешен, код: " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<String>> call, Throwable t) {
-                Log.e("UserListActivity", "Ошибка загрузки пользователей", t);
-            }
-        });
+//                } else {
+//                    Log.e("UserListActivity", "Ответ сервера не успешен, код: " + response.code());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<List<String>> call, Throwable t) {
+//                Log.e("UserListActivity", "Ошибка загрузки пользователей", t);
+//            }
+//        });
     }
 
 

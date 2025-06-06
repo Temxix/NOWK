@@ -1,6 +1,7 @@
 package com.example.nowk;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -26,14 +27,18 @@ public class ChatActivity extends AppCompatActivity {
     private MessageReceivedAdapter adapter;
     private List<MessageReceived> messages = new ArrayList<>();
 
-    private final String username = "tmx";    // Твой логин
-    private final String recipient = "alice"; // Имя получателя
+    private String username;    // Твой логин
+    private String recipient; // Имя получателя
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        Intent intent = getIntent();
+        username = intent.getStringExtra("name");
+        recipient = intent.getStringExtra("recipient");
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -75,22 +80,22 @@ public class ChatActivity extends AppCompatActivity {
         // Пример "захардкоженных" сообщений
         MessageReceived msg1 = new MessageReceived();
         msg1.setUsername(username); // ты сам
-        msg1.setRecipient("Alice");
+        msg1.setRecipient(recipient);
         msg1.setContent("Привет! Как дела?");
         msg1.setSentByMe(false);
         msg1.setTimestamp("12:00");
 
         MessageReceived msg2 = new MessageReceived();
         msg2.setUsername(username); // ты сам
-        msg2.setRecipient("Alice");
+        msg2.setRecipient(recipient);
         msg2.setContent("Всё окей, а ты как?");
         msg2.setSentByMe(true);
         msg2.setTimestamp("12:00");
 
         MessageReceived msg3 = new MessageReceived();
         msg3.setUsername(username); // ты сам
-        msg3.setRecipient("Alice");
-        msg3.setContent("Тоже норм. Скучала.");
+        msg3.setRecipient(recipient);
+        msg3.setContent("Тоже норм.");
         msg3.setSentByMe(false);
         msg3.setTimestamp("12:05");
 
@@ -132,5 +137,9 @@ public class ChatActivity extends AppCompatActivity {
                 Log.e("ChatActivity", "Обработка ошибки сети", t);
             }
         });
+    }
+
+    public void back(View view){
+        finish();
     }
 }

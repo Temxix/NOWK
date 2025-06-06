@@ -20,11 +20,11 @@
         android:id="@+id/messageText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Моё сообщение"
-        android:textColor="#EEEEEE"
-        android:textSize="16sp"
         android:padding="10dp"
-        android:background="@drawable/bg_message_mine" />
+        android:textSize="16sp"
+        android:textColor="#EEEEEE"
+        android:background="@drawable/bg_message_mine"
+        android:maxWidth="280dp" />
 
     <TextView
         android:id="@+id/timeText"
