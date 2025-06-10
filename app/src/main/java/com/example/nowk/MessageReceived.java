@@ -1,11 +1,24 @@
 package com.example.nowk;
 
+import com.google.gson.annotations.SerializedName;
+
 public class MessageReceived {
-    private String username;    // вместо sender
-    private String recipient;   // есть в ответе, у тебя нет в модели
-    private String timestamp;
+    @SerializedName("text")
     private String content;
-    private boolean sentByMe;  // вместо isMine
+
+    private String timestamp;
+    private boolean sentByMe;
+
+    // Новое поле
+    @SerializedName("hash")
+    private String hash;
+
+    // Локальные переменные: не приходят с сервера
+    private String username;
+    private String recipient;
+
+    // Флаг для проверки целостности
+    private boolean isTampered = false;
 
     public void setAll(String username, String recipient, String timestamp, String content, boolean sentByMe) {
         this.username = username;
@@ -15,31 +28,66 @@ public class MessageReceived {
         this.sentByMe = sentByMe;
     }
 
-    // геттеры и сеттеры
-    public String getUsername() { return username; }
+    // --- Геттеры и сеттеры ---
 
-    public void setUsername(String username) { this.username = username; }
+    public String getContent() {
+        return content;
+    }
 
-    public String getRecipient() { return recipient; }
-    public void setRecipient(String recipient) { this.recipient = recipient; }
+    public void setContent(String content) {
+        this.content = content;
+    }
 
-    public String getTimestamp() { return timestamp; }
-    public void setTimestamp(String timestamp) { this.timestamp = timestamp; }
+    public String getTimestamp() {
+        return timestamp;
+    }
 
-    public String getContent() { return content; }
-    public void setContent(String content) { this.content = content; }
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
 
-    public boolean isSentByMe() { return sentByMe; }
-    public void setSentByMe(boolean sentByMe) { this.sentByMe = sentByMe; }
+    public boolean isSentByMe() {
+        return sentByMe;
+    }
 
-    @Override
-    public String toString() {
-        return "MessageReceived{" +
-                "username='" + username + '\'' +
-                ", recipient='" + recipient + '\'' +
-                ", timestamp='" + timestamp + '\'' +
-                ", content='" + content + '\'' +
-                ", sentByMe=" + sentByMe +
-                '}';
+    public void setSentByMe(boolean sentByMe) {
+        this.sentByMe = sentByMe;
+    }
+
+    public String getHash() {
+        return hash;
+    }
+
+    public void setHash(String hash) {
+        this.hash = hash;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getRecipient() {
+        return recipient;
+    }
+
+    public void setRecipient(String recipient) {
+        this.recipient = recipient;
+    }
+
+    public boolean isTampered() {
+        return isTampered;
+    }
+
+    public void verifyIntegrity() {
+        if (hash == null || hash.isEmpty()) {
+            isTampered = true;
+            return;
+        }
+        String expectedHash = HashUtils.getHash(content);
+        isTampered = !expectedHash.equals(hash);
     }
 }

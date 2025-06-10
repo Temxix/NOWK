@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import java.io.FileInputStream;
@@ -20,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText editName;
     private EditText editKey;
+    String decrypted;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,16 +59,45 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void login(View view) {
-        String name = editName.getText().toString();
-        String key = editKey.getText().toString();
-        if(name.isEmpty() || key.isEmpty()) return;
+        String name = editName.getText().toString().trim();
+        String key = editKey.getText().toString().trim();
+        if (name.isEmpty() || key.isEmpty()) return;
 
-        Intent intent = new Intent(MainActivity.this, UserListActivity.class);
-        intent.putExtra("name", name);
-        intent.putExtra("key", key);
-        startActivity(intent);
-        finish();
+        ApiService api = RetrofitClient.getApiService();
+        api.getWelcomeMessage(name).enqueue(new retrofit2.Callback<WelcomeResponse>() {
+            @Override
+            public void onResponse(retrofit2.Call<WelcomeResponse> call, retrofit2.Response<WelcomeResponse> response) {
+                try {
+                    String encrypted = response.body().getMessage(); // ваш зашифрованный текст в Base64
+                    String privateKey = key;
+
+                    decrypted = RSADecryptor.decrypt(encrypted, privateKey);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (response.isSuccessful() && decrypted != null && decrypted.contains("Добро пожаловать")) {
+                    Log.d("API_SUCCESS", "Ответ: " + response.body().getMessage());
+                    Intent intent = new Intent(MainActivity.this, UserListActivity.class);
+                    intent.putExtra("name", name);
+                    intent.putExtra("key", key);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Log.e("API_ERROR", "Код: " + response.code());
+                    editName.setError("Пользователь не найден");
+                }
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<WelcomeResponse> call, Throwable t) {
+                Log.e("API_FAILURE", "Ошибка запроса: " + t.getMessage(), t);
+                editName.setError("Ошибка подключения");
+                t.printStackTrace();
+            }
+        });
     }
+
 
     public void register(View view) {
         Intent intent = new Intent(MainActivity.this, RegisterActivity.class);

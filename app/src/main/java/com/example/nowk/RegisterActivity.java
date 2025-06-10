@@ -39,22 +39,6 @@ public class RegisterActivity extends AppCompatActivity {
         usernameEditText = findViewById(R.id.usernameEditText);
     }
 
-    public void register(View view) {
-//        new Thread(() -> {
-//            KeyGeneratorUtil keyUtil = KeyGeneratorUtil.generate();
-//            publicKey = keyUtil.getPublicKeyBase64();
-//            privateKey = keyUtil.getPrivateKeyBase64();
-//
-//            savePrivateKeyToFile(privateKey);
-//            saveKeyToPreferences();
-//
-//            runOnUiThread(() -> {
-//                privateKeyTextView.setText(privateKey); // безопасно для UI
-                registerUser(); // ← всё готово, отправляем
-//            });
-//        }).start();
-    }
-
 
     public void login(View view) {
         Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
@@ -63,32 +47,55 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
+    public void register(View view) {
+        new Thread(() -> {
+            KeyGeneratorUtil keyUtil = KeyGeneratorUtil.generate();
+            publicKey = keyUtil.getPublicKeyBase64();
+            privateKey = keyUtil.getPrivateKeyBase64();
+
+            runOnUiThread(() -> {
+                // Убираем сохранение ключа тут!
+                privateKeyTextView.setText(privateKey);
+                registerUser();
+            });
+        }).start();
+    }
+
     private void registerUser() {
         String username = usernameEditText.getText().toString();
-//        if (username.isEmpty()) {
-//            Toast.makeText(this, "Введите имя", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
-//
-//        ApiService apiService = RetrofitClient.getApiService();
-//        RegisterRequest request = new RegisterRequest(username, publicKey);
-//        apiService.registerUser(request).enqueue(new Callback<Void>() {
-//            @Override
-//            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-//                Toast.makeText(RegisterActivity.this, "Успешно зарегистрировано", Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-//                Toast.makeText(RegisterActivity.this, "Ошибка: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-//        });
+        if (username.isEmpty()) {
+            Toast.makeText(this, "Введите имя", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        Intent intent = new Intent(RegisterActivity.this, UserListActivity.class);
-        intent.putExtra("name", username);
-//        intent.putExtra("key", privateKey);
-        startActivity(intent);
-        finish();
+        ApiService apiService = RetrofitClient.getApiService();
+        RegisterRequest request = new RegisterRequest(username, publicKey);
+        apiService.registerUser(request).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (response.isSuccessful()) {
+                    // Только здесь сохраняем ключ
+                    savePrivateKeyToFile(privateKey);
+                    saveKeyToPreferences();
+
+                    Toast.makeText(RegisterActivity.this, "Успешно зарегистрировано", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(RegisterActivity.this, UserListActivity.class);
+                    intent.putExtra("name", username);
+                    intent.putExtra("key", privateKey);
+                    startActivity(intent);
+                    finish();
+                } else if (response.code() == 409) {
+                    Toast.makeText(RegisterActivity.this, "Пользователь уже существует", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(RegisterActivity.this, "Ошибка регистрации: " + response.code(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                Toast.makeText(RegisterActivity.this, "Ошибка: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void privateKey() {

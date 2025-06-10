@@ -25,8 +25,8 @@ public class UserListActivity extends AppCompatActivity {
     String currentUserName;
     String key;
     Handler handler = new Handler();
-    List<String> users = new ArrayList<>();
 
+    List<ChatInfo> chatList = new ArrayList<>();
     TextView nameView;
 
     @Override
@@ -42,37 +42,42 @@ public class UserListActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.userRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         loadUserList();
+        startPeriodicUpdate();
     }
+
+    private void startPeriodicUpdate() {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                loadUserList(); // загружаем свежие данные
+                handler.postDelayed(this, 1000); // повтор через 1000 мс
+            }
+        }, 1000); // первая задержка — 1 секунда
+    }
+
 
     private void loadUserList() {
-//        RetrofitClient.getApiService().getUserNames().enqueue(new Callback<List<String>>() {
-//            @Override
-//            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
-//                if (response.isSuccessful() && response.body() != null) {
-//                    List<String> usersList = response.body();
-        List<String> usersList = Arrays.asList(
-                "alice", "serge", "dima", "olga", "max", "lena", "ivan", "kate", "john", "maria",
-                "peter", "nina", "alex", "irina", "viktor", "sofia", "oleg", "anna", "igor", "yulia",
-                "mike", "dasha", "andrew", "sveta", "roman", "liza", "sergey", "tanya", "vasya", "natasha"
-        );
-        Log.d("UserListActivity", "Пользователи загружены: " + usersList.toString());
-                    for (String user : usersList) {
-                            users.add(user); // потом остальные
-                    }
-                    adapter = new UserListAdapter(users, username -> openChat(username));
-                    recyclerView.setAdapter(adapter);
-//                } else {
-//                    Log.e("UserListActivity", "Ответ сервера не успешен, код: " + response.code());
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<List<String>> call, Throwable t) {
-//                Log.e("UserListActivity", "Ошибка загрузки пользователей", t);
-//            }
-//        });
-    }
+        RetrofitClient.getApiService().getChatUserList(currentUserName).enqueue(new Callback<ChatListResponse>() {
+            @Override
+            public void onResponse(Call<ChatListResponse> call, Response<ChatListResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    chatList = response.body().getChats();  // используем chatList, а не users
+                    Log.d("UserListActivity", "Чаты загружены: " + chatList.size());
 
+                    adapter = new UserListAdapter(chatList, chat -> openChat(chat.getRecipient()));
+                    recyclerView.setAdapter(adapter);
+                } else {
+                    Toast.makeText(UserListActivity.this, "Ошибка загрузки чатов", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ChatListResponse> call, Throwable t) {
+                Toast.makeText(UserListActivity.this, "Ошибка сети: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e("UserListActivity", "Ошибка сети", t);
+            }
+        });
+    }
 
     private void openChat(String recipientName) {
         Intent intent = new Intent(this, ChatActivity.class);
@@ -80,5 +85,11 @@ public class UserListActivity extends AppCompatActivity {
         intent.putExtra("name", currentUserName);
         intent.putExtra("recipient", recipientName);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacksAndMessages(null); // убираем все запланированные обновления
     }
 }

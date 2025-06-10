@@ -33,12 +33,14 @@ public class MessageReceivedAdapter extends RecyclerView.Adapter<MessageReceived
         TextView senderText;
         TextView timestampText;
         TextView messageText;
+        TextView tamperedWarning; // Новое поле
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             senderText = itemView.findViewById(R.id.senderText);
             timestampText = itemView.findViewById(R.id.timeText);
             messageText = itemView.findViewById(R.id.messageText);
+            tamperedWarning = itemView.findViewById(R.id.tamperedWarning); // ID должен быть в layout
         }
     }
 
@@ -60,6 +62,13 @@ public class MessageReceivedAdapter extends RecyclerView.Adapter<MessageReceived
         holder.senderText.setText(message.isSentByMe() ? "Я" : message.getRecipient());
         holder.timestampText.setText(formatTimestamp(message.getTimestamp()));
         holder.messageText.setText(message.getContent());
+
+        // Показываем предупреждение, если сообщение подделано
+        if (message.isTampered()) {
+            holder.tamperedWarning.setVisibility(View.VISIBLE);
+        } else {
+            holder.tamperedWarning.setVisibility(View.GONE);
+        }
     }
 
     @Override

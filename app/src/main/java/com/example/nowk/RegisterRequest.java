@@ -8,4 +8,12 @@ public class RegisterRequest {
         this.name = name;
         this.publicKey = publicKey;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getPublicKey() {
+        return publicKey;
+    }
 }

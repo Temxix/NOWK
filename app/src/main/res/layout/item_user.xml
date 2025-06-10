@@ -8,14 +8,42 @@
     card_view:cardElevation="4dp"
     card_view:cardBackgroundColor="#FAFAFA">
 
-    <TextView
-        android:id="@+id/usernameText"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:textSize="18sp"
-        android:textColor="#212121"
-        android:textStyle="bold"
-        android:background="?android:attr/selectableItemBackground"
-        android:gravity="center_vertical" />
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/usernameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="20dp"
+            android:text="name"
+            android:textColor="#212121"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/lastActivityText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/usernameText"
+            android:layout_alignStart="@id/usernameText"
+            android:layout_marginStart="-10dp"
+            android:layout_marginTop="7dp"
+            android:paddingTop="4dp"
+            android:text="09.06.2025 19:50"
+            android:textColor="#666"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/newMessageIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            android:src="@android:drawable/btn_star_big_on"
+            android:visibility="gone"/>
+    </RelativeLayout>
 </androidx.cardview.widget.CardView>
