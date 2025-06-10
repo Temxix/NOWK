@@ -35,6 +35,7 @@ public class ChatActivity extends AppCompatActivity {
     private Handler handler = new Handler();
     private Runnable periodicUpdate;
     private boolean isSending = false;
+    private String key;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -45,6 +46,7 @@ public class ChatActivity extends AppCompatActivity {
         Intent intent = getIntent();
         username = intent.getStringExtra("name");
         recipient = intent.getStringExtra("recipient");
+        key = intent.getStringExtra("key");
         startAutoUpdate();
         nameView = findViewById(R.id.nameView);
         nameView.setText(recipient);
@@ -141,8 +143,10 @@ public class ChatActivity extends AppCompatActivity {
         if (content.isEmpty()) return;
 
         isSending = true; // блокируем повторную отправку
-
-        MessageRequest message = new MessageRequest(username, recipient, content, HashUtils.getHash(content));
+        String originalMessage = HashUtils.getHash(content);
+        String privateKey = key; // ваш закрытый ключ
+        String encryptedMessage = RSAEncryptor.encrypt(originalMessage, privateKey);
+        MessageRequest message = new MessageRequest(username, recipient, content, encryptedMessage);
         ApiService apiService = RetrofitClient.getApiService();
 
         Call<Void> call = apiService.postMessage(message);
